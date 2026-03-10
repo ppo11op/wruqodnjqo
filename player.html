@@ -69,23 +69,67 @@
             height: "100%",
             vid: vid,
             playauth: playAuth,
-            // 建议加这些，防加密视频或区域问题
-            // encryptType: 1,           // 如果视频加密
-            // region: "cn-shanghai",    // 如果不是默认区域
+            // 区域配置（根据你的视频所在区域调整）
+            region: "cn-shanghai",
+            // 自动播放
+            autoplay: false,
+            // 是否显示控制栏
+            isLive: false,
+            // 重新播放
+            rePlay: false,
+            // 播放方式优先级
+            playsinline: true,
+            // H5 播放器配置
+            useH5Prism: true,
+            // 如果视频加密，取消下面的注释
+            // encryptType: 1,
+            // 格式支持
+            format: 'mp4',
+            // 多清晰度支持
+            qualitySort: 'asc',
+            // 错误重试
+            autoPlayDelay: 2,
+            autoPlayDelayDisplayText: '正在加载...',
         }, function (player) {
             console.log("Aliplayer 创建成功");
+            console.log("播放器配置:", {
+                vid: vid,
+                region: "cn-shanghai",
+                playAuthLength: playAuth.length
+            });
         });
         
         // 捕获播放器错误（非常重要，便于看到真实原因）
         player.on('error', function(event) {
             console.error('播放器错误事件:', event);
             let errMsg = '播放失败，未知错误';
+            let errorCode = '';
+            
             if (event && event.paramData) {
-                errMsg = event.paramData.error_msg || event.paramData.message || '未知错误';
+                errorCode = event.paramData.error_code || '';
+                errMsg = event.paramData.error_msg || event.paramData.message || event.paramData.display_msg || '未知错误';
                 console.error('详细错误:', event.paramData);
+                console.error('错误代码:', errorCode);
+                
+                // 根据错误代码提供解决建议
+                let suggestion = '';
+                switch(errorCode) {
+                    case 4400:
+                        suggestion = '<br><br>💡 可能原因：<br>1. 视频格式不支持（需要 MP4/HLS 格式）<br>2. 视频还在转码中，请稍后重试<br>3. 视频文件损坏';
+                        break;
+                    case 4012:
+                        suggestion = '<br><br>💡 可能原因：playAuth 解码失败或已过期';
+                        break;
+                    case 4003:
+                        suggestion = '<br><br>💡 可能原因：视频不存在或已删除';
+                        break;
+                }
+                errMsg += suggestion;
             }
+            
             document.body.innerHTML += '<div class="error-msg" style="color:#ff4444;">' + 
-                errMsg + '<br>请查看控制台（F12）获取更多信息</div>';
+                (errorCode ? `错误代码: ${errorCode}<br>` : '') +
+                errMsg + '<br><br>请查看控制台（F12）获取更多信息</div>';
         });
         
         // 可选：加载成功事件
