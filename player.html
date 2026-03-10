@@ -7,70 +7,92 @@
     <link rel="stylesheet" href="https://g.alicdn.com/apsara-media-box/imp-web-player/2.25.1/skins/default/aliplayer-min.css" />
     <script charset="utf-8" type="text/javascript" src="https://g.alicdn.com/apsara-media-box/imp-web-player/2.25.1/aliplayer-min.js"></script>
     <style>
-        body { margin:0; padding:0; background:#000; font-family: Arial, sans-serif; }
-        #J_prismPlayer { width:100vw; height:100vh; }
-        .error-msg { color:#fff; text-align:center; padding-top:200px; font-size:20px; }
+        body { 
+            margin: 0; 
+            padding: 0; 
+            background: #000; 
+            font-family: Arial, sans-serif; 
+        }
+        #J_prismPlayer { 
+            width: 100vw; 
+            height: 100vh; 
+        }
+        .error-msg { 
+            color: #fff; 
+            text-align: center; 
+            padding-top: 200px; 
+            font-size: 20px; 
+        }
     </style>
 </head>
 <body>
     <div id="J_prismPlayer"></div>
-
     <script>
-        (function() {
-            // 从 URL 参数获取 vid 和 playAuth
-            const urlParams = new URLSearchParams(window.location.search);
-            const vid = urlParams.get('vid') || 'f01dd3771b8971f193f36633b79f0102';
-
-            let playAuth = urlParams.get('playAuth');
-
-            // 强制清理 playAuth 中的所有空白字符（防复制/URL 破坏）
-            if (playAuth) {
-                playAuth = playAuth.trim().replace(/\s+/g, '');
+    (function() {
+        // 从 URL 参数获取 vid 和 playAuth
+        // 支持两种方式：已编码的 URL 和未编码的 URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const vid = urlParams.get('vid') || 'f01dd3771b8971f193f36633b79f0102';
+        let playAuth = urlParams.get('playAuth');
+        
+        // 如果 URLSearchParams 获取失败，尝试手动解析（处理未编码的情况）
+        if (!playAuth) {
+            const search = window.location.search;
+            const match = search.match(/[?&]playAuth=([^&]*)/);
+            if (match && match[1]) {
+                playAuth = decodeURIComponent(match[1]);
             }
-
-            // 调试信息（打开 F12 控制台查看）
-            console.log('VID:', vid);
-            console.log('playAuth 是否存在:', !!playAuth);
-            if (playAuth) {
-                console.log('playAuth 长度:', playAuth.length);
-                console.log('playAuth 前 100 字符:', playAuth.substring(0, 100));
+        }
+        
+        // 清理空白字符，并修复可能被破坏的 Base64 字符
+        if (playAuth) {
+            playAuth = playAuth.trim().replace(/ /g, '+');
+        }
+        
+        // 调试信息（打开 F12 控制台查看）
+        console.log('VID:', vid);
+        console.log('playAuth 是否存在:', !!playAuth);
+        if (playAuth) {
+            console.log('playAuth 长度:', playAuth.length);
+            console.log('playAuth 前 100 字符:', playAuth.substring(0, 100));
+        }
+        
+        if (!playAuth) {
+            document.body.innerHTML = '<div class="error-msg">缺少播放凭证（playAuth），请检查 URL 参数</div>';
+            return;
+        }
+        
+        // 初始化播放器
+        var player = new Aliplayer({
+            id: "J_prismPlayer",
+            width: "100%",
+            height: "100%",
+            vid: vid,
+            playauth: playAuth,
+            // 建议加这些，防加密视频或区域问题
+            // encryptType: 1,           // 如果视频加密
+            // region: "cn-shanghai",    // 如果不是默认区域
+        }, function (player) {
+            console.log("Aliplayer 创建成功");
+        });
+        
+        // 捕获播放器错误（非常重要，便于看到真实原因）
+        player.on('error', function(event) {
+            console.error('播放器错误事件:', event);
+            let errMsg = '播放失败，未知错误';
+            if (event && event.paramData) {
+                errMsg = event.paramData.error_msg || event.paramData.message || '未知错误';
+                console.error('详细错误:', event.paramData);
             }
-
-            if (!playAuth) {
-                document.body.innerHTML = '<div class="error-msg">缺少播放凭证（playAuth），请检查 URL 参数</div>';
-                return;
-            }
-
-            // 初始化播放器
-              var player = new Aliplayer({
-        id: "J_prismPlayer",
-        width: "100%",
-        height: "100%",
-        vid: vid,
-        playauth: playAuth,
-        // 建议加这些，防加密视频或区域问题
-      //  encryptType: 1,           // 如果视频加密
-        // region: "cn-shanghai", // 如果不是默认区域
-    }, function (player) {
-        console.log("Aliplayer 创建成功");
-    });
-
-            // 捕获播放器错误（非常重要，便于看到真实原因）
-            player.on('error', function(event) {
-                console.error('播放器错误事件:', event);
-                let errMsg = '播放失败，未知错误';
-                if (event && event.paramData) {
-                    errMsg = event.paramData.error_msg || event.paramData.message || '未知错误';
-                    console.error('详细错误:', event.paramData);
-                }
-                document.body.innerHTML += '<div class="error-msg" style="color:#ff4444;">' + errMsg + '<br>请查看控制台（F12）获取更多信息</div>';
-            });
-
-            // 可选：加载成功事件
-            player.on('sourceloaded', function() {
-                console.log('视频源加载成功');
-            });
-        })();
+            document.body.innerHTML += '<div class="error-msg" style="color:#ff4444;">' + 
+                errMsg + '<br>请查看控制台（F12）获取更多信息</div>';
+        });
+        
+        // 可选：加载成功事件
+        player.on('sourceloaded', function() {
+            console.log('视频源加载成功');
+        });
+    })();
     </script>
 </body>
 </html>
