@@ -69,32 +69,37 @@
             height: "100%",
             vid: vid,
             playauth: playAuth,
-            // 区域配置（根据你的视频所在区域调整）
+            // 区域配置
             region: "cn-shanghai",
+            // 强制使用 H5 播放器
+            useH5Prism: true,
+            // 优先使用 HLS 流式播放（兼容性更好）
+            format: 'm3u8',
+            // 如果 HLS 不可用，降级到 MP4
+            // format: 'mp4',
             // 自动播放
             autoplay: false,
-            // 是否显示控制栏
-            isLive: false,
-            // 重新播放
-            rePlay: false,
-            // 播放方式优先级
+            // 播放方式
             playsinline: true,
-            // H5 播放器配置
-            useH5Prism: true,
-            // 如果视频加密，取消下面的注释
-            // encryptType: 1,
-            // 格式支持
-            format: 'mp4',
+            isLive: false,
+            rePlay: false,
             // 多清晰度支持
             qualitySort: 'asc',
+            // 默认清晰度（如果有多个）
+            definition: 'LD',  // LD=流畅, SD=标清, HD=高清, FHD=超清
             // 错误重试
             autoPlayDelay: 2,
             autoPlayDelayDisplayText: '正在加载...',
+            // 预加载
+            preload: true,
+            // 如果视频加密，取消下面的注释
+            // encryptType: 1,
         }, function (player) {
             console.log("Aliplayer 创建成功");
             console.log("播放器配置:", {
                 vid: vid,
                 region: "cn-shanghai",
+                format: "m3u8 (HLS)",
                 playAuthLength: playAuth.length
             });
         });
