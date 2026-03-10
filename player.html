@@ -1,32 +1,43 @@
-<html lang="zh-CN">
-<head>
-  <link rel="stylesheet" href="https://g.alicdn.com/apsara-media-box/imp-web-player/2.25.1/skins/default/aliplayer-min.css" />
-  <script charset="utf-8" type="text/javascript" src="https://g.alicdn.com/apsara-media-box/imp-web-player/2.25.1/aliplayer-min.js"></script>
-</head>
-<body>
-    <div id="J_prismPlayer"></div>
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const vid = urlParams.get('vid') || 'f01dd3771b8971f193f36633b79f0102';  // 注意：你代码里是 009ec... 但之前用的是 f01dd...，确认一致
 
-    <script>
-        // 从 URL 参数获取 vid 和 playAuth
-        const urlParams = new URLSearchParams(window.location.search);
-       const vid = urlParams.get('vid') || '009ec4cd138c71f1bfc55017e1f80102';   // 你的默认 vid
-		//const vid = '009ec4cd138c71f1bfc55017e1f80102'; 
-       const playAuth = urlParams.get('playAuth');
-		//const playAuth = 'eyJTZWN1cml0eVRva2VuIjoiQ0FJUzFRTjFxNkZ0NUIyeWZTaklyNXFBTVk3RHJLMUU5b2l1Umw2SmoxUU5QdXQrdVBMTzB6ejJJSHhGZUhCc0F1c1p0L294bFdGVjcvc2ZscklxR3NNZkdSMmVNNVVydGNvTnFWUDRKb0hidk5ldTBic0hoWnY5N3N3ZzhMdWdqcUhvZU96Y1lJNzMwWjdQQWdtMlEwWVJySkwrY1RLOUphYk1VL21nZ29KbWFkSTZSeFN4YVNFOGF2NWRPZ3BscnIwSVZ4elBNdnIvSFJQMnVtN1pIV3R1dEEwZTgzMTQ1ZmFRejlHaTZ4YlRpM2I5ek9FVXFPYVhKNFMvUGZGb05ZWnlTZjZvd093VUVxL2R5M3hvN3hGYjFhRjRpODRpL0N2YzdQMlFDRU5BK3dtbFB2dTJpOE5vSUYxV2E3UVdJWXRncmZQeGsrWjEySmJOa0lpbDVCdFJFZHR3ZUNuRldLR216c3krYjRIUEROc2ljcXZoTUhuZ3k4MkdNb0tQMHprcGVuVUdMZ2hIQ2JGRFF6MVNjVVY5Rm11R2UvWDVwZ3VSUEYzN0cvRy92ZnRvZ2NZdi9UTEI1c0dYSWxXRGViS2QzQnNETjRVMEIwRlNiRUpIZ1RXOUtmUlpLbElTSWdJNlh1dklWL2xhYUJGUHRLWFdtaUgrV3lOcDAzVkxoZnI2YXVOcGJnUHIxVVFwTlhndjgvMytCUHd1MndOQ0p6eDhtK1U1Rk92UDJrYlI0S2VFZmRnTUtCN09DVTYvdXBHM1M4VG81QTZKbEtzMGYxNmY0WVNqWi8zK0k4T1RndjluWFQ2eW42SjFwTlA2UEJvK2VHTkdHb0FCR0o1OC9BYUcwUHpuNzhnRjhHWTMvdEZkc3FlbExQTjdTeDFZQXN4bnp4YXNKL0QzV004UGZhamZSR0pzbWtRdHZuajBBcERnRmZ3dXpmN3JIcDhyckkzV3o3Wk56dEFTM2Z3RGlTYWhVT0UyM3prR2JSUVB5KzNESUU1MTBZWXBpa0R6QSs4aytCQlVURDkyc3JGS2J4ZFpkYjF5NDJ0SlpXTjJaM0JUdXNvZ0FBPT0iLCJBdXRoSW5mbyI6IntcIkNJXCI6XCI1MzZJL2pDL0lockxScVlXQ2YxRWx2cDBnL2RQdTJ5UnhQdFpTeHNjd01qSWNHVHcyTVhSUDlGZ1ZKTWkyV0lpZmtUWUJWM3hxWnZaNGwvQlQzYjB4VXVnWG9CRFgyZzVDNlZBTi8vSnpQOD1cIixcIkNhbGxlclwiOlwib0h3VUYzT2xPT004N2FqU01QMnh4a25vWTk5Y3JXTHZ5SDJrY0YvK2Y2ST1cIixcIkV4cGlyZVRpbWVcIjpcIjIwMjYtMDMtMDlUMTA6NTI6MjJaXCIsXCJNZWRpYUlkXCI6XCIwMDllYzRjZDEzOGM3MWYxYmZjNTUwMTdlMWY4MDEwMlwiLFwiUGxheURvbWFpblwiOlwidm9keWRoLnhpYW5ndGlrZWppLmNvbVwiLFwiU2lnbmF0dXJlXCI6XCIvZjh5MW92alFvNDAyZ1ZBdjNvSkNqbXZnemM9XCJ9IiwiVmlkZW9NZXRhIjp7IlN0YXR1cyI6Ik5vcm1hbCIsIlZpZGVvSWQiOiIwMDllYzRjZDEzOGM3MWYxYmZjNTUwMTdlMWY4MDEwMiIsIlRpdGxlIjoiMDEtMjAyNeeJiOinhOWumuWKqOS9nC3oirHnkIMt5Yid57qnLUHlpZctMTA4MHDpq5jnoIHnjodtcDQubXA0IiwiQ292ZXJVUkwiOiJodHRwczovL3ZvZHlkaC54aWFuZ3Rpa2VqaS5jb20vMDA5ZWM0Y2QxMzhjNzFmMWJmYzU1MDE3ZTFmODAxMDIvc25hcHNob3RzLzRiYzg1ZWVlMmVmODQ0YjNiMTBjMTc3NTBiYmU5MDEzLTAwMDA1LmpwZz9hdXRoX2tleT0xNzczMDUzNDQyLTVlOTg3OGQ0MTkzMjRkYjdhZDY2ZTQwZTBiYjgxOWJhLTAtYWE4YmU2YmRiODkxN2EyNjMyYzliOThjOTU1ZjBjZmYiLCJEdXJhdGlvbiI6ODk0LjJ9LCJBY2Nlc3NLZXlJZCI6IlNUUy5OWTV6NHdBcmVBSkVEeDhrVFgyZFJXN2UxIiwiUGxheURvbWFpbiI6InZvZHlkaC54aWFuZ3Rpa2VqaS5jb20iLCJBY2Nlc3NLZXlTZWNyZXQiOiI0UHE5NzFRRWtTTE5Nc3FDaTFvdjFrMlptUzV1dHJUVnBFN0hiaFB1NDROcCIsIlJlZ2lvbiI6ImNuLXNoYW5naGFpIiwiQ3VzdG9tZXJJZCI6MTk0MjQ5MjY2MzM2MjA4MX0=';
-        if (!playAuth) {
-            document.body.innerHTML = '<div style="color:#fff;text-align:center;padding-top:100px;font-size:18px;">缺少播放凭证，请重试</div>';
-        } else {
-            var player = new Aliplayer({
-                id: "J_prismPlayer",
-                width: "100%",
-                height: "100%",
-                vid: vid,
-                playauth: playAuth
-            }, function (player) {
-                console.log("Aliplayer 已创建成功");
-            });
-        }
-    </script>
-	
-</body>
-</html>
+    let playAuth = urlParams.get('playAuth');
+
+    // 强烈建议：无论来源，都强制清理空白（防复制粘贴问题）
+    if (playAuth) {
+        playAuth = playAuth.trim().replace(/\s+/g, '');
+    }
+
+    if (!playAuth) {
+        document.body.innerHTML = '<div style="color:#fff;text-align:center;padding-top:100px;font-size:18px;">缺少播放凭证，请重试</div>';
+        return;
+    }
+
+    // 调试输出（打开 F12 控制台看）
+    console.log("VID:", vid);
+    console.log("playAuth 长度:", playAuth.length);
+    console.log("playAuth 前60字符:", playAuth.substring(0, 60));
+    console.log("是否有空白:", /\s/.test(playAuth));
+
+    var player = new Aliplayer({
+        id: "J_prismPlayer",
+        width: "100%",
+        height: "100%",
+        vid: vid,
+        playauth: playAuth,
+        // 建议加这些，防加密视频或区域问题
+      //  encryptType: 1,           // 如果视频加密
+        // region: "cn-shanghai", // 如果不是默认区域
+    }, function (player) {
+        console.log("Aliplayer 创建成功");
+    });
+
+    // 捕获播放器错误（非常重要！）
+    player.on('error', function (event) {
+        console.error('播放器错误详情:', event);
+        console.error('错误代码/消息:', event.paramData);
+        // 可以在这里弹窗或替换内容显示真实错误
+        document.body.innerHTML += '<div style="color:red;text-align:center;">播放失败：' + (event.paramData?.error_msg || '未知错误') + '</div>';
+    });
+</script>
