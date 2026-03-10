@@ -30,32 +30,80 @@
     <script>
     (function() {
         // 从 URL 参数获取 vid 和 playAuth
-        // 支持两种方式：已编码的 URL 和未编码的 URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const vid = urlParams.get('vid') || 'f01dd3771b8971f193f36633b79f0102';
-        let playAuth = urlParams.get('playAuth');
+        // 支持多种获取方式，确保兼容性
+        let vid = null;
+        let playAuth = null;
         
-        // 如果 URLSearchParams 获取失败，尝试手动解析（处理未编码的情况）
+        // 方法1: 使用 URLSearchParams（标准方式）
+        try {
+            const urlParams = new URLSearchParams(window.location.search);
+            vid = urlParams.get('vid');
+            playAuth = urlParams.get('playAuth');
+        } catch(e) {
+            console.warn('URLSearchParams 解析失败:', e);
+        }
+        
+        // 方法2: 如果方法1失败，手动解析（处理特殊字符）
         if (!playAuth) {
             const search = window.location.search;
-            const match = search.match(/[?&]playAuth=([^&]*)/);
-            if (match && match[1]) {
-                playAuth = decodeURIComponent(match[1]);
+            console.log('原始 URL search:', search);
+            
+            // 提取 vid
+            const vidMatch = search.match(/[?&]vid=([^&]*)/);
+            if (vidMatch && vidMatch[1]) {
+                vid = vidMatch[1];
+            }
+            
+            // 提取 playAuth（可能包含特殊字符）
+            const authMatch = search.match(/[?&]playAuth=([^&]*)/);
+            if (authMatch && authMatch[1]) {
+                // 不进行 decodeURIComponent，直接使用原始值
+                playAuth = authMatch[1];
+                console.log('手动提取的 playAuth:', playAuth.substring(0, 100));
             }
         }
         
-        // 清理空白字符，并修复可能被破坏的 Base64 字符
+        // 设置默认 vid
+        if (!vid) {
+            vid = 'f01dd3771b8971f193f36633b79f0102';
+        }
+        
+        // 清理 playAuth
         if (playAuth) {
-            playAuth = playAuth.trim().replace(/ /g, '+');
+            // 只清理首尾空白，不替换内部字符
+            playAuth = playAuth.trim();
+            
+            // 检查是否是有效的 Base64
+            const base64Regex = /^[A-Za-z0-9+/]+=*$/;
+            if (!base64Regex.test(playAuth)) {
+                console.warn('playAuth 可能不是有效的 Base64 格式');
+                console.warn('playAuth 包含非法字符，尝试修复...');
+                // 尝试修复：将空格转回 +
+                playAuth = playAuth.replace(/ /g, '+');
+            }
         }
         
         // 调试信息（打开 F12 控制台查看）
+        console.log('=== 播放器调试信息 ===');
         console.log('VID:', vid);
         console.log('playAuth 是否存在:', !!playAuth);
+        console.log('URL search 原始值:', window.location.search.substring(0, 200));
         if (playAuth) {
             console.log('playAuth 长度:', playAuth.length);
-            console.log('playAuth 前 100 字符:', playAuth.substring(0, 100));
+            console.log('playAuth 前 50 字符:', playAuth.substring(0, 50));
+            console.log('playAuth 后 50 字符:', playAuth.substring(playAuth.length - 50));
+            console.log('playAuth 是否包含空格:', playAuth.includes(' '));
+            console.log('playAuth 是否包含 +:', playAuth.includes('+'));
+            
+            // 检查 Base64 有效性
+            try {
+                atob(playAuth);
+                console.log('✅ playAuth Base64 格式有效');
+            } catch(e) {
+                console.error('❌ playAuth Base64 格式无效:', e.message);
+            }
         }
+        console.log('=====================');
         
         if (!playAuth) {
             document.body.innerHTML = '<div class="error-msg">缺少播放凭证（playAuth），请检查 URL 参数</div>';
